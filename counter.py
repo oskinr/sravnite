@@ -3,7 +3,7 @@ from tkinter  import messagebox
 from tkinter.ttk import Combobox
 import tkinter as tk
 
-
+#создаем счетчик кликов
 def foo():
   counter = 0
   def bar():
@@ -17,7 +17,7 @@ bar = foo()
 
 
 
-
+#это функция для вставки нуля если о окне ввода 0 символов
 def show_values():
     global rows
     rows = combo.get()
@@ -33,7 +33,7 @@ def remove_text():
 
 
 
-
+#это само окно
 root= Tk()
 root.geometry("230x90")
 
@@ -56,4 +56,6 @@ label3.place(x = 50, y = 25)
 #текстовой вывод пути к  фалам
 label1 = Label(root, text="",font="system") # создаем текстовую метку
 label1.place(x = 55, y = 45)
+
+#повтор запуска окна
 root.mainloop()
