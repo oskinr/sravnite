@@ -8,7 +8,7 @@ from tkinter.ttk import Combobox
 
 
 
-# Открываем файл 1
+# Открываем файл номер один
 def openanyfile():
     try:
        global selected_file
