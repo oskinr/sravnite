@@ -56,7 +56,7 @@ def showfile1():
     # combo['values'] = tuple(list(combo['values']) + [new_option])
     # combo.current(len(combo['values'])+1)
 
-#Читаем файл 2
+#Читаем файл 2 правка Федор
 def showfile2():
     #global df2
     filename2 = selected_file2
