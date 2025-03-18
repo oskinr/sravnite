@@ -4,7 +4,7 @@ from tkinter import filedialog
 import pandas as pd
 import tkinter as tk
 from tkinter.ttk import Combobox
-
+from tkinter import ttk
 
 
 # Открываем файл 1
@@ -71,7 +71,7 @@ def show_message():
     global st1, st2
     st1 = combo.get()
     st2 = combo2.get()
-
+    progressbar.start(100) # запускаем progressba
 
     # сообщение для заголовка Слияния
     if st1 != '':
@@ -137,7 +137,9 @@ def show_message():
     try:
         # Сохраним в файл
         b = df3.to_excel('out.xlsx')
+
         messagebox.showinfo("Title", "Создан фал out.xlsx")
+
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Cистема записать в файл out.xlsx не удалось возможно он открыт - закройте : " + str(err))
@@ -148,6 +150,7 @@ def show_message():
     if b != '':
         messagebox.showinfo(
             title='слияние', message='Поздравляю! Все прошло успешно')
+        progressbar.stop()      # останавливаем progressbar
     else:
         messagebox.showwarning(
             title="ошибка", message='Не совпадают заголовки в файлах')
@@ -270,5 +273,12 @@ rows = combo3.get()
 combo3.grid(row=4, column=2, pady=10)
 # text = Text(frame, width=25, height=5, bg='white', fg='grey', wrap=WORD)
 # text.grid(row=0, column=2, pady=5)
+# горизонтальный Progressbar
+value_var = IntVar(value=0)
+                              #(orient="vertical", length=100, value=40).pack(pady=5)
+progressbar =  ttk.Progressbar(orient="horizontal",  variable=value_var)
+progressbar.pack(fill=X, padx=6, pady=6)
+
+
 
 window.mainloop()
