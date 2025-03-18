@@ -71,7 +71,7 @@ def show_message():
     global st1, st2
     st1 = combo.get()
     st2 = combo2.get()
-   
+
 
     # сообщение для заголовка Слияния
     if st1 != '':
@@ -87,12 +87,12 @@ def show_message():
         messagebox.showerror(
             title="ошибка", message='Не введен заголовок для сравнения')
 
-   
-          
+
+
     try:
         # файл из скрипта выгрузка из АСУ
         global rows
-       
+
         df1 = pd.read_excel(selected_file,skiprows=int(rows))
         df1 = df1.rename(columns={st2: 'Сравниваем', st1: 'Слияние'})
         # usecols=['Улица','HOUSE_NOMER','Квартира','VAL_STR', 'ALL_SQR'])
@@ -105,7 +105,7 @@ def show_message():
 
 # файл из скрипта выгрузка из ЕГРН
     try:
-      
+
         df2 = pd.read_excel(selected_file2, skiprows=int(rows))
         df2 = df2.rename(columns={st1: 'Слияние', st2: 'Сравниваем'})
         print(df2)  # usecols=['VAL_STR','ALL_SQR','Comment'])
@@ -222,10 +222,10 @@ file2.grid(row=3, column=0)
 calc_btn = Button(frame, text="Сохранить в отдельный файл", command=show_message)
 calc_btn.grid(row=6, column=1)
 
-calc_btn = Button(frame, text="удалить строки", command=showrows)
+calc_btn = Button(frame, text="удалить строки f1", command=showrows)
 calc_btn.grid(row=6, column=2)
 
-calc_btn = Button(frame, text="удалить строки2", command=showrows2)
+calc_btn = Button(frame, text="удалить строки f2", command=showrows2)
 calc_btn.grid(row=6, column=3)
 
 show = Button(frame, text="Заголовки файла 1", command=showfile1)
