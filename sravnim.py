@@ -3,8 +3,9 @@ from tkinter import messagebox
 from tkinter import filedialog
 import pandas as pd
 import tkinter as tk
-from tkinter.ttk import Combobox
 from tkinter import ttk
+from tkinter.ttk import *
+from time import sleep
 
 
 # Открываем файл 1
@@ -17,7 +18,7 @@ def openanyfile():
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы, что то с Файл 1 формат xlsx? : " + str(err))
-
+   
 # Открываем файл 2
 def openanyfile2():
     try:
@@ -32,12 +33,12 @@ def openanyfile2():
 
 # Читаем файл 1
 def showfile1():
-    # global df1
+    #global df1
     df1 = pd.read_excel(selected_file)
     label3.configure(text=df1.keys().tolist())
     col_name = list(df1.columns)
     combo['values'] = col_name
-
+    
 # Читаем файл 2
 def showfile2():
     # global df2
@@ -71,9 +72,8 @@ def show_message():
     global st1, st2
     st1 = combo.get()
     st2 = combo2.get()
-    progressbar.start(100) # запускаем progressba
-
-    # сообщение для заголовка Слияния
+   
+# сообщение для заголовка Слияния
     if st1 != '':
         messagebox.showinfo(title='Заголовок слияния', message=st1)
     else:
@@ -87,49 +87,41 @@ def show_message():
         messagebox.showerror(
             title="ошибка", message='Не введен заголовок для сравнения')
 
-
-
+   
+# файл из скрипта выгрузка из АСУ
     try:
-        # файл из скрипта выгрузка из АСУ
-        global rows
-
         df1 = pd.read_excel(selected_file,skiprows=int(rows))
         df1 = df1.rename(columns={st2: 'Сравниваем', st1: 'Слияние'})
-        # usecols=['Улица','HOUSE_NOMER','Квартира','VAL_STR', 'ALL_SQR'])
-        # usecols='A, B ,C ,D, F')# файл ЕГРН
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы : " + str(err))
 
-        print
-
+   
 # файл из скрипта выгрузка из ЕГРН
     try:
-
         df2 = pd.read_excel(selected_file2, skiprows=int(rows))
         df2 = df2.rename(columns={st1: 'Слияние', st2: 'Сравниваем'})
-        print(df2)  # usecols=['VAL_STR','ALL_SQR','Comment'])
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы : " + str(err))
     # Читаем ключи в датафрейм 1 проверяем
     # global a
     key_slianie = df1.keys().tolist()
-
+    
     # print(a)
     # print(st1)
 
 # Сообщение для проверки ключа слияния
     if 'Слияние' in key_slianie:
         messagebox.showinfo(title='Слияние', message='Ключ для слияния создан')
+     
     else:
         messagebox.showwarning(
             title="ошибка", message='Вы ввели не верные заголовки, программа не может создать ключь для слияния, в обоих файлах должны быть одинаковые названия заголовков проверте и введите правильно')
 
     try:
-        # Сравниваем строки осуществляем слияние правое т.е к egrn прикрепим строчки из асу
-        df3 = pd.merge(df1, df2, left_on=['Слияние'], right_on=[
-                       'Слияние'], suffixes=('_Файл_1', '_Файл_2'),  how='right')
+    # Сравниваем строки осуществляем слияние правое т.е к egrn прикрепим строчки из асу
+        df3 = pd.merge(df1, df2, left_on=['Слияние'], right_on=['Слияние'], suffixes=('_Файл_1', '_Файл_2'),  how='right')
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Cистема не верный столбик для сравнения - его нет в файле : " + str(err))
@@ -137,34 +129,44 @@ def show_message():
     try:
         # Сохраним в файл
         b = df3.to_excel('out.xlsx')
-
+        #запуск прогрессбара и счетчик % для него если дата фрейм не пустой
+        if b !='':
+         for i in range(number):
+            progressbar.configure(value= i / (number / 101))
+            label6.configure(text = f'{int(i / (number / 101))} %' )
+            sleep(0.01)
+            progressbar.update()
+        
+        
         messagebox.showinfo("Title", "Создан фал out.xlsx")
-
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Cистема записать в файл out.xlsx не удалось возможно он открыт - закройте : " + str(err))
+        
 # Выведем таблицу с результатом сравнения на экран
-    print(df3)
+    
     label5.configure(text=df3)
 
+    
     if b != '':
         messagebox.showinfo(
-            title='слияние', message='Поздравляю! Все прошло успешно')
-        progressbar.stop()      # останавливаем progressbar
+        title='слияние', message='Поздравляю! Все прошло успешно')
+        #progressbar.stop()      # останавливаем progressbar
+        
     else:
         messagebox.showwarning(
             title="ошибка", message='Не совпадают заголовки в файлах')
+
 # Удаление текста из Меток label ов
-
-
 def remove_text():
     label3.config(text="")
     label4.config(text="")
     label5.config(text="")
 
-
+    
 # Выведем таблицу с результатом сравнения на экран
 window = Tk()
+number = 284
 window.title("Сравнить файлы")
 window.geometry("1500x500")
 
@@ -189,8 +191,6 @@ label = Label(frame, text="Выбери файл 1 побольше, затем 
                           "потом сможете сравнить площадь")
 label.grid(row=0, column=1, pady=5)
 
-# method_lbl = Label(frame, text="Выберите файлы")
-# method_lbl.grid(row=0, column=1)
 
 
 # подпись для поля ввода 1:
@@ -216,69 +216,66 @@ height_lbl.grid(row=4, column=1, pady=1)
 # entry.focus()
 
 # кнопки
-file1 = Button(frame, text="Файл 1", command=openanyfile)
+file1 = ttk.Button(frame, text="Файл 1", command=openanyfile)
 file1.grid(row=2, column=0)
 
-file2 = Button(frame, text="Файл 2", command=openanyfile2)
+file2 = ttk.Button(frame, text="Файл 2", command=openanyfile2)
 file2.grid(row=3, column=0)
 
-calc_btn = Button(frame, text="Сохранить в отдельный файл", command=show_message)
+calc_btn = ttk.Button(frame, text="Слияние в один файл", command=show_message)
 calc_btn.grid(row=6, column=1)
 
-calc_btn = Button(frame, text="удалить строки f1", command=showrows)
+calc_btn = ttk.Button(frame, text="удалить строки f1", command=showrows)
 calc_btn.grid(row=6, column=2)
 
-calc_btn = Button(frame, text="удалить строки f2", command=showrows2)
+calc_btn = ttk.Button(frame, text="удалить строки f2", command=showrows2)
 calc_btn.grid(row=6, column=3)
 
-show = Button(frame, text="Заголовки файла 1", command=showfile1)
+show = ttk.Button(frame, text="Показать заголовки f1", command=showfile1)
 show.grid(row=1, column=1)
 
-show2 = Button(frame, text="Заголовки файла 2", command=showfile2)
+show2 = ttk.Button(frame, text="Показать заголовки f2", command=showfile2)
 show2.grid(row=1, column=2)
 
-show3 = Button(frame, text="Удалить текст", command=remove_text)
+show3 = ttk.Button(frame, text="Удалить текст", command=remove_text)
 show3.grid(row=1, column=3)
 
 # текстовой вывод пути к  фалам
-label1 = Label(frame, text="", font="system")  # создаем текстовую метку
+label1 = ttk.Label(frame, text="", font="system")  # создаем текстовую метку
 label1.grid(row=2, column=6, pady=10)
 
-label2 = Label(frame, text="", font="system")  # создаем текстовую метку
+label2 = ttk.Label(frame, text="", font="system")  # создаем текстовую метку
 label2.grid(row=3, column=6, pady=10)
 
 # вывод 3файлов в  текст
 # текстовой вывод 1 фала
-label3 = Label(frame, text="", justify=tk.LEFT)  # создаем текстовую метку
+label3 = ttk.Label(frame, text="", justify=tk.LEFT)  # создаем текстовую метку
 label3.grid(row=2, column=7, pady=10)
 # текстовой вывод 2 фала
-label4 = Label(frame, text="", justify=tk.LEFT)  # создаем текстовую метку
+label4 = ttk.Label(frame, text="", justify=tk.LEFT)  # создаем текстовую метку
 label4.grid(row=3, column=7, pady=10)
 # текстовой вывод сравнения фалов
 # , bg='aquamarine') # создаем текстовую метку
-label5 = Label(frame, text="", justify=tk.LEFT)
+label5 = ttk.Label(frame, text="", justify=tk.LEFT)
 label5.grid(row=1, column=7, pady=10)
 
-
+label6 = ttk.Label(text="0%", justify=tk.LEFT)
+label6.pack(fill=X, padx=700, pady=5)
 # комбобоксы для ввода ключа слияния и сравнения
-combo = Combobox(frame, values='номер')
+combo = ttk.Combobox(frame, values='')
 combo.grid(row=2, column=2, pady=10)
 
-combo2 = Combobox(frame, values='площадь')
+combo2 = ttk.Combobox(frame, values='')
 combo2.grid(row=3, column=2, pady=10)
 
-combo3 = Combobox(frame, values=[0,6])
+combo3 = ttk.Combobox(frame, values=[0,6])
 combo3.current(0)
 rows = combo3.get()
 combo3.grid(row=4, column=2, pady=10)
-# text = Text(frame, width=25, height=5, bg='white', fg='grey', wrap=WORD)
-# text.grid(row=0, column=2, pady=5)
-# горизонтальный Progressbar
-value_var = IntVar(value=0)
-                              #(orient="vertical", length=100, value=40).pack(pady=5)
-progressbar =  ttk.Progressbar(orient="horizontal",  variable=value_var)
-progressbar.pack(fill=X, padx=6, pady=6)
 
+
+progressbar = Progressbar(orient=HORIZONTAL, mode="determinate", length=500)
+progressbar.pack(fill=X, padx=30, pady=5)
 
 
 window.mainloop()
