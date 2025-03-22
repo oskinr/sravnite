@@ -18,7 +18,7 @@ def openanyfile():
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы, что то с Файл 1 формат xlsx? : " + str(err))
-   
+
 # Открываем файл 2
 def openanyfile2():
     try:
@@ -38,7 +38,7 @@ def showfile1():
     label3.configure(text=df1.keys().tolist())
     col_name = list(df1.columns)
     combo['values'] = col_name
-    
+
 # Читаем файл 2
 def showfile2():
     # global df2
@@ -72,7 +72,7 @@ def show_message():
     global st1, st2
     st1 = combo.get()
     st2 = combo2.get()
-   
+
 # сообщение для заголовка Слияния
     if st1 != '':
         messagebox.showinfo(title='Заголовок слияния', message=st1)
@@ -87,7 +87,7 @@ def show_message():
         messagebox.showerror(
             title="ошибка", message='Не введен заголовок для сравнения')
 
-   
+
 # файл из скрипта выгрузка из АСУ
     try:
         df1 = pd.read_excel(selected_file,skiprows=int(rows))
@@ -96,7 +96,7 @@ def show_message():
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы : " + str(err))
 
-   
+
 # файл из скрипта выгрузка из ЕГРН
     try:
         df2 = pd.read_excel(selected_file2, skiprows=int(rows))
@@ -107,19 +107,20 @@ def show_message():
     # Читаем ключи в датафрейм 1 проверяем
     # global a
     key_slianie = df1.keys().tolist()
-    
+
     # print(a)
     # print(st1)
 
 # Сообщение для проверки ключа слияния
     if 'Слияние' in key_slianie:
         messagebox.showinfo(title='Слияние', message='Ключ для слияния создан')
-     
+
     else:
         messagebox.showwarning(
             title="ошибка", message='Вы ввели не верные заголовки, программа не может создать ключь для слияния, в обоих файлах должны быть одинаковые названия заголовков проверте и введите правильно')
 
     try:
+        global df3
     # Сравниваем строки осуществляем слияние правое т.е к egrn прикрепим строчки из асу
         df3 = pd.merge(df1, df2, left_on=['Слияние'], right_on=['Слияние'], suffixes=('_Файл_1', '_Файл_2'),  how='right')
     except Exception as err:
@@ -127,6 +128,7 @@ def show_message():
             title="ошибка", message="🔒 Cистема не верный столбик для сравнения - его нет в файле : " + str(err))
 
     try:
+
         # Сохраним в файл
         b = df3.to_excel('out.xlsx')
         #запуск прогрессбара и счетчик % для него если дата фрейм не пустой
@@ -136,23 +138,24 @@ def show_message():
             label6.configure(text = f'{int(i / (number / 101))} %' )
             sleep(0.01)
             progressbar.update()
-        
-        
+
+
         messagebox.showinfo("Title", "Создан фал out.xlsx")
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Cистема записать в файл out.xlsx не удалось возможно он открыт - закройте : " + str(err))
-        
-# Выведем таблицу с результатом сравнения на экран
-    
-    label5.configure(text=df3)
 
-    
+# Выведем таблицу с результатом сравнения на экран
+
+    label5.configure(text=df3)
+    col_name = list(df3.columns)
+    combo4['values'] = col_name
+
     if b != '':
         messagebox.showinfo(
         title='слияние', message='Поздравляю! Все прошло успешно')
         #progressbar.stop()      # останавливаем progressbar
-        
+
     else:
         messagebox.showwarning(
             title="ошибка", message='Не совпадают заголовки в файлах')
@@ -163,12 +166,37 @@ def remove_text():
     label4.config(text="")
     label5.config(text="")
 
-    
+def add_item():
+    lbox.insert(END, combo4.get())
+    combo4.delete(0, END)
+
+def del_list():
+    select = list(lbox.curselection())
+    select.reverse()
+    for i in select:
+        lbox.delete(i)
+
+def print_list():
+    df = (lbox.get(0, END))
+
+    df = " ".join(lbox.get(0, END))
+
+    modified_list = (df.split())
+    df4 =  df3[modified_list]
+    print(df4)
+    df4.to_excel('outfinish.xlsx')
+    messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
+
+
+
+
+
+
 # Выведем таблицу с результатом сравнения на экран
 window = Tk()
 number = 284
 window.title("Сравнить файлы")
-window.geometry("1500x500")
+window.geometry("1500x700")
 
 
 # window.iconbitmap(default="boss.ico")
@@ -276,6 +304,35 @@ combo3.grid(row=4, column=2, pady=10)
 
 progressbar = Progressbar(orient=HORIZONTAL, mode="determinate", length=500)
 progressbar.pack(fill=X, padx=30, pady=5)
+
+#блок листбокса
+# label = ttk.Label(text='Собрать файл' )
+# label.pack(fill=X, padx=310, pady=1)
+
+
+
+lbox = Listbox(selectmode=EXTENDED)
+lbox.pack(side=LEFT)
+
+scroll = Scrollbar(command=lbox.yview)
+scroll.pack(side=LEFT, fill=Y)
+
+lbox.config(width=50, height=20, yscrollcommand=scroll.set)
+
+f = Frame()
+f.pack(side=LEFT, padx=10)
+
+
+combo4 = Combobox(f, values='')
+combo4.pack(fill=X, padx=90, pady=6)
+
+
+Button(f, text="Добавить", command=add_item).pack(fill=X)
+Button(f, text="Удалить", command=del_list).pack(fill=X)
+Button(f, text="Собрать", command=print_list).pack(fill=X)
+
+
+
 
 
 window.mainloop()
