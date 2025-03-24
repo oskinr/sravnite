@@ -130,9 +130,9 @@ def show_message():
     try:
 
         # Сохраним в файл
-        b = df3.to_excel('out.xlsx')
+        box_mess = df3.to_excel('out.xlsx', index=False)
         #запуск прогрессбара и счетчик % для него если дата фрейм не пустой
-        if b !='':
+        if box_mess !='':
          for i in range(number):
             progressbar.configure(value= i / (number / 101))
             label6.configure(text = f'{int(i / (number / 101))} %' )
@@ -190,7 +190,7 @@ def print_list():
       
       
       
-      df4.to_excel('outfinish.xlsx')
+      df4.to_excel('outfinish.xlsx', index=False)
       messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
     except Exception as err:
         messagebox.showerror(
