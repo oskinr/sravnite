@@ -189,7 +189,6 @@ def print_list():
       print(df4)
       
       
-      
       df4.to_excel('outfinish.xlsx', index=False)
       messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
     except Exception as err:
