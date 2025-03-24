@@ -182,13 +182,13 @@ def print_list():
     df = " ".join(lbox.get(0, END))
 
     modified_list = (df.split())
-   try: 
+    try:
       df4 =  df3[modified_list]
       # сравниваем столбики  и записываем результат сравнения в compare
       df4['compare'] = df4['Сравниваем_Файл_1'] == df4['Сравниваем_Файл_2']
       print(df4)
-      
-      
+
+
       df4.to_excel('outfinish.xlsx', index=False)
       messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
     except Exception as err:
