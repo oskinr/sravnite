@@ -198,8 +198,8 @@ def print_list():
       df4['compare'] = df4['Сравниваем_Файл_1'] == df4['Сравниваем_Файл_2']
       
     
-      
-      df4.style.apply(highlight_col, axis=None).to_excel('outfinish.xlsx', index=False)
+      df4.style.apply(highlight_col, axis=None).set_properties(**{'border': '1.3px solid grey','color': 'black'}).to_excel('outfinish.xlsx', index=False)
+      #df4.style.apply(highlight_col, axis=None).to_excel('outfinish.xlsx', index=False)
       #df4.style.set_properties(**{'border': '1.3px solid black', 'color': 'black'}).to_excel('outfinish.xlsx', index=False)
       #df4.to_excel('outfinish.xlsx', index=False)
       messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
