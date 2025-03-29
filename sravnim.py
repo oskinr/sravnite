@@ -66,6 +66,14 @@ def showrows2():
     col_name = list(df2.columns)
     combo2['values'] = col_name
 
+# def highlight_col(x):
+#     #copy df to new - original data are not changed
+#     dfc = x.copy()
+#     #set by condition
+#     mask = dfc['compare'] == False
+#     dfc.loc[mask, :] = 'background-color: yellow'
+#     dfc.loc[~mask,:] = 'background-color: white'
+#     return dfc
 
 # возвращаем из окон entry значения в переменную
 def show_message():
@@ -111,6 +119,9 @@ def show_message():
     # print(a)
     # print(st1)
 
+
+
+
 # Сообщение для проверки ключа слияния
     if 'Слияние' in key_slianie:
         messagebox.showinfo(title='Слияние', message='Ключ для слияния создан')
@@ -118,6 +129,7 @@ def show_message():
     else:
         messagebox.showwarning(
             title="ошибка", message='Вы ввели не верные заголовки, программа не может создать ключь для слияния, в обоих файлах должны быть одинаковые названия заголовков проверте и введите правильно')
+
 
     try:
         global df3
@@ -130,6 +142,7 @@ def show_message():
     try:
 
         # Сохраним в файл
+        #box_mess = df3.style.apply(highlight_col, axis=None).to_excel('out.xlsx', index=False)
         box_mess = df3.to_excel('out.xlsx', index=False)
         #запуск прогрессбара и счетчик % для него если дата фрейм не пустой
         if box_mess !='':
@@ -151,7 +164,7 @@ def show_message():
     col_name = list(df3.columns)
     combo4['values'] = col_name
 
-    if b != '':
+    if box_mess != '':
         messagebox.showinfo(
         title='слияние', message='Поздравляю! Все прошло успешно')
         #progressbar.stop()      # останавливаем progressbar
@@ -176,11 +189,10 @@ def del_list():
     for i in select:
         lbox.delete(i)
 
+
 def print_list():
     df = (lbox.get(0, END))
-
     df = " ".join(lbox.get(0, END))
-
     modified_list = (df.split())
     try:
       df4 =  df3[modified_list]
@@ -194,6 +206,7 @@ def print_list():
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
+
 
 
 
