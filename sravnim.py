@@ -66,14 +66,7 @@ def showrows2():
     col_name = list(df2.columns)
     combo2['values'] = col_name
 
-# def highlight_col(x):
-#     #copy df to new - original data are not changed
-#     dfc = x.copy()
-#     #set by condition
-#     mask = dfc['compare'] == False
-#     dfc.loc[mask, :] = 'background-color: yellow'
-#     dfc.loc[~mask,:] = 'background-color: white'
-#     return dfc
+
 
 # возвращаем из окон entry значения в переменную
 def show_message():
