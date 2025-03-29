@@ -140,12 +140,11 @@ def show_message():
             title="ошибка", message="🔒 Cистема не верный столбик для сравнения - его нет в файле : " + str(err))
 
     try:
-
+        bar = df3.style.set_properties(**{'border': '1.3px solid black', 'color': 'black'}).to_excel('out.xlsx', index=False)
         # Сохраним в файл
-        #box_mess = df3.style.apply(highlight_col, axis=None).to_excel('out.xlsx', index=False)
-        box_mess = df3.to_excel('out.xlsx', index=False)
+        #b = df3.to_excel('out.xlsx')
         #запуск прогрессбара и счетчик % для него если дата фрейм не пустой
-        if box_mess !='':
+        if bar !='':
          for i in range(number):
             progressbar.configure(value= i / (number / 101))
             label6.configure(text = f'{int(i / (number / 101))} %' )
@@ -164,7 +163,7 @@ def show_message():
     col_name = list(df3.columns)
     combo4['values'] = col_name
 
-    if box_mess != '':
+    if bar != '':
         messagebox.showinfo(
         title='слияние', message='Поздравляю! Все прошло успешно')
         #progressbar.stop()      # останавливаем progressbar
@@ -178,6 +177,15 @@ def remove_text():
     label3.config(text="")
     label4.config(text="")
     label5.config(text="")
+
+def highlight_col(x):
+    #copy df to new - original data are not changed
+    df = x.copy()
+    #set by condition
+    mask = df['compare'] == False
+    df.loc[mask, :] = 'background-color: yellow'
+    df.loc[~mask,:] = 'background-color: white'
+    return df
 
 def add_item():
     lbox.insert(END, combo4.get())
@@ -197,10 +205,13 @@ def print_list():
     try:
       df4 =  df3[modified_list]
       # сравниваем столбики  и записываем результат сравнения в compare
+      df = df4
       df4['compare'] = df4['Сравниваем_Файл_1'] == df4['Сравниваем_Файл_2']
-      print(df4)
 
-      df4.style.set_properties(**{'text-align': 'center','border': '1.3px solid black', 'color': 'black'}).to_excel('outfinish.xlsx', index=False)
+
+      df4.style.apply(highlight_col, axis=None).set_properties(**{'border': '1.3px solid grey','color': 'black'}).to_excel('outfinish.xlsx', index=False)
+      #df4.style.apply(highlight_col, axis=None).to_excel('outfinish.xlsx', index=False)
+      #df4.style.set_properties(**{'border': '1.3px solid black', 'color': 'black'}).to_excel('outfinish.xlsx', index=False)
       #df4.to_excel('outfinish.xlsx', index=False)
       messagebox.showinfo("Title", "Создан фал outfinish.xlsx")
     except Exception as err:
