@@ -6,7 +6,12 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.ttk import *
 from time import sleep
-
+import os
+import zipfile
+from pathlib import PurePath
+import sys
+import codecs
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 # Открываем файл 1
 def openanyfile():
@@ -162,9 +167,12 @@ def show_message():
 
 # Удаление текста из Меток label ов
 def remove_text():
+    label1.config(text="")
+    label2.config(text="")
     label3.config(text="")
     label4.config(text="")
     label5.config(text="")
+    label7.config(text="")
 
 def highlight_col(x):
     #copy df to new - original data are not changed
@@ -207,7 +215,33 @@ def print_list():
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
 
-
+def zip_ex():
+    
+    directory  = filedialog.askdirectory()
+    #Получаем список файлов в директории/каталоге os.listdir(directory)
+    files = os.listdir(directory)
+    messagebox.showinfo("Посмотрим что там", files)
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        path = os.path.join(directory, filename)
+        #print(path)
+        if filename.endswith(".zip"):
+            with zipfile.ZipFile(path) as zf:
+                filik = zf.namelist()
+                namefaile = filik[0]
+                old_file = f'{directory}\\{namefaile}'
+                new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
+                zf.extract(namefaile, directory)
+                
+                if os.path.exists(new_file):
+                    
+                    os.remove(new_file)
+                    os.rename(old_file, new_file)
+                     
+                    print(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+                    label7.configure(text=f" Из: \n{filename}\n Извлечен файл :\n {os.path.basename(new_file)}") 
+                else:
+                    os.rename(old_file, new_file) 
 
 
 
@@ -349,7 +383,7 @@ combo4.pack(fill=X, padx=90, pady=6)
 Button(f, text="Добавить", command=add_item).pack(fill=X)
 Button(f, text="Удалить", command=del_list).pack(fill=X)
 Button(f, text="Собрать", command=print_list).pack(fill=X)
-
+Button(text="Разархивировать файлы - выбрать директорию", command=zip_ex).pack(fill=X, padx=90, pady=6)
 
 
 
