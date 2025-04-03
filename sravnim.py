@@ -342,6 +342,10 @@ label5.grid(row=1, column=7, pady=10)
 
 label6 = ttk.Label(text="0%", justify=tk.LEFT)
 label6.pack(fill=X, padx=700, pady=5)
+
+label7 = ttk.Label(frame, text="", justify=tk.LEFT)
+label7.grid(row=1, column=8, pady=10)
+
 # комбобоксы для ввода ключа слияния и сравнения
 combo = ttk.Combobox(frame, values='')
 combo.grid(row=2, column=2, pady=10)
