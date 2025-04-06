@@ -12,7 +12,7 @@ from pathlib import PurePath
 import sys
 import codecs
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
-
+from tkinter.messagebox import showinfo, askyesno
 # Открываем файл 1
 def openanyfile():
     try:
@@ -198,6 +198,12 @@ def del_list():
     for i in select:
         lbox.delete(i)
 
+def del_tree():
+    # selected_item = tree_view.selection()[0] # get selected item
+    # tree_view.delete(selected_item)
+    x = tree_view.get_children()
+    for item in x:
+        tree_view.delete(item)
 
 def print_list():
     df = (lbox.get(0, END))
@@ -219,42 +225,70 @@ def print_list():
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
 
-def zip_ex():
-    
-    directory  = filedialog.askdirectory()
+
+
+def click():
+    global directory
     #Получаем список файлов в директории/каталоге os.listdir(directory)
+    directory  = filedialog.askdirectory(**options)
     files = os.listdir(directory)
-    messagebox.showinfo("Посмотрим что там", files)
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        path = os.path.join(directory, filename)
-        #print(path)
-        if filename.endswith(".zip"):
-            with zipfile.ZipFile(path) as zf:
-                filik = zf.namelist()
-                namefaile = filik[0]
-                old_file = f'{directory}\\{namefaile}'
-                new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
-                zf.extract(namefaile, directory)
-                
-                if os.path.exists(new_file):
-                    
-                    os.remove(new_file)
-                    os.rename(old_file, new_file)
-                     
-                    print(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
-                    label7.configure(text=f" Из: \n{filename}\n Извлечен файл :\n {os.path.basename(new_file)}") 
-                else:
-                    os.rename(old_file, new_file) 
+    result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
+    if result:
+      zip_ex()
+    else:
+        showinfo("Результат", "Операция отменена")
 
 
 
 
-# Выведем таблицу с результатом сравнения на экран
+def zip_ex():
+    if directory:
+        current_dir.set(directory)
+        list_files(directory)
+
+def list_files(directory):
+        for filename1 in os.listdir(directory):
+            if os.path.isfile(os.path.join(directory, filename1)):
+                tree_view.insert("", "end", values=(filename1,))
+
+            #for file in os.listdir(directory):
+                filename = os.fsdecode(filename1)
+                path = os.path.join(directory, filename)
+                #print(path)
+
+                if filename.endswith('.zip'):
+                    try:
+                        with zipfile.ZipFile(path) as zf:
+                            filik = zf.namelist()
+                            namefaile = filik[0]
+                            old_file = f'{directory}\\{namefaile}'
+                            new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
+                            zf.extract(namefaile, directory)
+                    #messagebox.showinfo("извлек", path)
+                    except zipfile.BadZipFile as error:
+                        messagebox.showerror("ошибка", error)
+                    if os.path.exists(new_file):
+                        os.remove(new_file)
+                        os.rename(old_file, new_file)
+                        print(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+                        #tree_view.insert(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+                    else:
+                        os.rename(old_file, new_file)
+
+                    label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
+
+
+
+
 window = Tk()
 number = 284
 window.title("Сравнить файлы")
 window.geometry("1500x700")
+
+
+
+options = {"initialdir": "/Downloads","title": "Выбери папку с архивами для разархивирования",
+           "mustexist": True,"parent": window}
 
 
 # window.iconbitmap(default="boss.ico")
@@ -348,8 +382,8 @@ label5.grid(row=1, column=7, pady=10)
 label6 = ttk.Label(text="0%", justify=tk.LEFT)
 label6.pack(fill=X, padx=700, pady=5)
 
-label7 = ttk.Label(frame, text="", justify=tk.LEFT)
-label7.grid(row=1, column=8, pady=10)
+label7 = ttk.Label(text="", justify=tk.LEFT)
+label7.pack(fill=X, padx=700, pady=5)
 
 # комбобоксы для ввода ключа слияния и сравнения
 combo = ttk.Combobox(frame, values='')
@@ -392,9 +426,19 @@ combo4.pack(fill=X, padx=90, pady=6)
 Button(f, text="Добавить", command=add_item).pack(fill=X)
 Button(f, text="Удалить", command=del_list).pack(fill=X)
 Button(f, text="Собрать", command=print_list).pack(fill=X)
-Button(text="Разархивировать файлы - выбрать директорию", command=zip_ex).pack(fill=X, padx=90, pady=6)
+Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
+Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
 
 
 
+current_dir = tk.StringVar()
 
+folder_label = tk.Label( textvariable=current_dir, font=("italic 14"))
+folder_label.pack()
+
+tree_view = ttk.Treeview( columns=("Files",), show="headings", selectmode="browse")
+tree_view.heading("Files", text="Файлы в директории")
+tree_view.pack(padx=20, pady=20, fill="both", expand=True)
+
+#ttk.Button(text="Click", command=click).pack(anchor="center", expand=1)
 window.mainloop()
