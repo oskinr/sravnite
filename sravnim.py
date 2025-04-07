@@ -429,12 +429,12 @@ progressbar.pack(fill=X, padx=30, pady=5)
 
 
 lbox = Listbox(selectmode=EXTENDED)
-lbox.pack(side=LEFT)
+lbox.pack(side=LEFT, padx=20, pady=20)
 
 scroll = Scrollbar(command=lbox.yview)
 scroll.pack(side=LEFT, fill=Y)
 
-lbox.config(width=50, height=20, yscrollcommand=scroll.set)
+lbox.config(width=70, height=20, yscrollcommand=scroll.set)
 
 f = Frame()
 f.pack(side=LEFT, padx=10)
