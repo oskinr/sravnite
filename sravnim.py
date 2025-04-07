@@ -276,7 +276,28 @@ def list_files(directory):
                         os.rename(old_file, new_file)
 
                     label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
+def convert():
+    try:  
+        file = filedialog.askopenfilename().replace('/', '\\')
+        #print(file)
+        wbf = file + "x"
+        #print("конвертация xml")
 
+        office = win32com.client.Dispatch("Excel.Application")
+        wb = office.Workbooks.Open(file)
+        sheet = wb.ActiveSheet
+        office.DisplayAlerts = False  # не спрашивает перезаписать файл
+    # val = sheet.Cells(1,1)
+        num = [r for r in sheet.Range("A8:K8")]
+        print(*num)
+        
+        wb.SaveAs(Filename=wbf, FileFormat=51)
+        wb.Close(True)
+        office.Quit()
+        messagebox.showinfo("Конвертация xml в xlsx",wbf )
+    except Exception as err:
+        messagebox.showerror(
+            title="ошибка", message="🔒 Система : " + str(err))
 
 
 
@@ -422,13 +443,12 @@ f.pack(side=LEFT, padx=10)
 combo4 = Combobox(f, values='')
 combo4.pack(fill=X, padx=90, pady=6)
 
-
+Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
 Button(f, text="Добавить", command=add_item).pack(fill=X)
 Button(f, text="Удалить", command=del_list).pack(fill=X)
 Button(f, text="Собрать", command=print_list).pack(fill=X)
 Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
-Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
-
+Button(f, text="Конвертировать", command=convert).pack(fill=X)
 
 
 current_dir = tk.StringVar()
