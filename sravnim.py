@@ -11,8 +11,10 @@ import zipfile
 from pathlib import PurePath
 import sys
 import codecs
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+import win32com.client
 from tkinter.messagebox import showinfo, askyesno
+
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 # Открываем файл 1
 def openanyfile():
     try:
