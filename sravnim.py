@@ -300,7 +300,8 @@ def convert():
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
-
+def per():    
+    subprocess.run(['python', 'pereimenovat.py'])  # "запускаем другой скрипт" 
 
 
 window = Tk()
@@ -451,7 +452,7 @@ Button(f, text="Удалить", command=del_list).pack(fill=X)
 Button(f, text="Собрать", command=print_list).pack(fill=X)
 Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
 Button(f, text="Конвертировать", command=convert).pack(fill=X)
-
+Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
 
 current_dir = tk.StringVar()
 
