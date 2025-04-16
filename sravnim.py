@@ -301,7 +301,7 @@ def convert():
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
 def per():    
-    subprocess.run(['python', 'pereimenovat.py'])  # "запускаем другой скрипт" 
+    subprocess.run(['python', 'formper.py'])  # "запускаем другой скрипт" 
 
 
 window = Tk()
