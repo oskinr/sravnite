@@ -14,8 +14,8 @@ import codecs
 import win32com.client
 from tkinter.messagebox import showinfo, askyesno
 import subprocess
-
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+
 # Открываем файл 1
 def openanyfile():
     try:
