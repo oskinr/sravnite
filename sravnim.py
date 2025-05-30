@@ -9,9 +9,21 @@ from time import sleep
 import os
 import zipfile
 from pathlib import PurePath
-import win32com.client
 from tkinter.messagebox import showinfo, askyesno
+import win32com.client
 import subprocess
+import pathlib,os.path 
+from module import some_function
+from module2 import some_form
+appdir = pathlib.Path(__file__).parent.resolve() 
+#root.iconbitmap(os.path.join(appdir,'osa.ico'))
+
+    
+
+#pd.show_versions()
+
+
+
 
 
 # Открываем файл 1
@@ -47,7 +59,7 @@ def showfile1():
 
 # Читаем файл 2
 def showfile2():
-    # global df2
+    #global df2
     df2 = pd.read_excel(selected_file2)
     label4.configure(text=df2.columns.tolist())
     col_name = list(df2.columns)
@@ -133,7 +145,10 @@ def show_message():
     try:
         global df3
     # Сравниваем строки осуществляем слияние правое т.е к egrn прикрепим строчки из асу
+        #df3 = pd.merge(df1, df2, left_on=['Слияние'], right_on=['Слияние'], suffixes=('_Файл_1', '_Файл_2'),  how='right')
         df3 = pd.merge(df1, df2, left_on=['Слияние'], right_on=['Слияние'], suffixes=('_Файл_1', '_Файл_2'),  how='right')
+
+        
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Cистема не верный столбик для сравнения - его нет в файле : " + str(err))
@@ -217,6 +232,9 @@ def print_list():
       df4['compare'] = df4['Сравниваем_Файл_1'] == df4['Сравниваем_Файл_2']
 
 
+
+
+
       df4.style.apply(highlight_col, axis=None).set_properties(**{'border': '1.3px solid grey','color': 'black'}).to_excel('outfinish.xlsx', index=False)
       #df4.style.apply(highlight_col, axis=None).to_excel('outfinish.xlsx', index=False)
       #df4.style.set_properties(**{'border': '1.3px solid black', 'color': 'black'}).to_excel('outfinish.xlsx', index=False)
@@ -277,6 +295,8 @@ def list_files(directory):
                         os.rename(old_file, new_file)
 
                     label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
+
+
 def convert():
     try:  
         file = filedialog.askopenfilename().replace('/', '\\')
@@ -299,8 +319,26 @@ def convert():
     except Exception as err:
         messagebox.showerror(
             title="ошибка", message="🔒 Система : " + str(err))
+            
 def per():    
-    subprocess.run(['python', 'formper.py'])  # "запускаем другой скрипт" 
+    #subprocess.run(os.path.join(appdir,'formper.exe'))  # "запускаем другой скрипт" 
+    some_form()
+  
+  
+def start_mod():
+    #some_function()  # Каждый раз вызываем функцию из модуля
+# Вызов функции из модуля с передачей переменной
+    try:
+        df1 = pd.read_excel(selected_file)
+        df2 = pd.read_excel(selected_file2)
+        st1 = combo.get()
+        st2 = combo2.get()
+        some_function(df1,df2,st1)
+    except Exception as err:
+    # Печать полного сообщения об ошибке и стэктрейса
+        import traceback
+        messagebox.showerror(title="ошибка", message = "Возникло исключение: Выбери стобик" + str(err))
+        traceback.print_exc()  
 
 
 window = Tk()
@@ -315,23 +353,24 @@ options = {"initialdir": "/Downloads","title": "Выбери папку с ар�
 
 
 # window.iconbitmap(default="boss.ico")
-window.iconphoto(False, tk.PhotoImage(file='osa.png'))
+#window.iconphoto(False, tk.PhotoImage(file='osa.png'))
+#window.iconphoto(os.path.join(appdir,'osa.png'))
 # window.iconbitmap(default="boss.ico")
-
+window.iconbitmap(os.path.join(appdir,'osa.ico'))
 # Отступ от верха окна
 frame = Frame(window, width=400, height=100)
 frame = Frame(window)
-frame.pack(expand=False)
-# frame.pack(fill=Y)
-# frame = Frame(master=window, relief=GROOVE, borderwidth=5)
+#frame.pack(expand=False)
+frame.pack(fill=Y)
+#frame = Frame(master=window, relief=GROOVE, borderwidth=5)
 
 
 # создаем текстовую метку
-label = Label(frame, text="Выбери файл 1 побольше, затем файл 2 меньше," "\n"
-                          "предварительно сделав там одинаковые названия" '\n'
-                          "столбиков например номер и площадь в обоих" '\n'
-                          "файлах, слияние будет по первому столбику номер" '\n'
-                          "потом сможете сравнить площадь")
+label = Label(frame, text="Выбери первый файл где больше строк , затем другой меньше," "\n"
+                          "предварительно сделав там одинаковые названия столбиков" '\n'
+                          "например номер и площадь в обоих файлах слияние будет по" '\n'
+                          "первому столбику номер, потом сможете сравнить столбец площадь " '\n'
+                          "значения в столбце номер не должен повторяться - иначе выбери посчитаем разницу")
 label.grid(row=0, column=1, pady=5)
 
 
@@ -422,7 +461,7 @@ combo3.grid(row=4, column=2, pady=10)
 
 
 progressbar = Progressbar(orient=HORIZONTAL, mode="determinate", length=500)
-progressbar.pack(fill=X, padx=30, pady=5)
+progressbar.pack(fill=X, padx=5, pady=5)
 
 #блок листбокса
 # label = ttk.Label(text='Собрать файл' )
@@ -452,6 +491,9 @@ Button(f, text="Собрать", command=print_list).pack(fill=X)
 Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
 Button(f, text="Конвертировать", command=convert).pack(fill=X)
 Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
+Button(f, text="Посчитаем разницу в одинаковых фалах", command=start_mod).pack(fill=X)
+
+
 
 current_dir = tk.StringVar()
 
@@ -463,4 +505,5 @@ tree_view.heading("Files", text="Файлы в директории")
 tree_view.pack(padx=20, pady=20, fill="both", expand=True)
 
 #ttk.Button(text="Click", command=click).pack(anchor="center", expand=1)
+
 window.mainloop()
