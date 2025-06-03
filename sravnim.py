@@ -251,6 +251,7 @@ def click():
     #Получаем список файлов в директории/каталоге os.listdir(directory)
     directory  = filedialog.askdirectory(**options)
     files = os.listdir(directory)
+    files = [fname for fname in files if fname.endswith(('.xls', '.xlsx','.zip'))]
     result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
     if result:
       zip_ex()
