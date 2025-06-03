@@ -15,8 +15,8 @@ import subprocess
 import pathlib,os.path 
 from module import some_function
 from module2 import some_form
-appdir = pathlib.Path(__file__).parent.resolve() 
-#root.iconbitmap(os.path.join(appdir,'osa.ico'))
+from module3 import del_columns
+appdir = pathlib.Path(__file__).parent.resolve()
 
     
 
@@ -340,7 +340,8 @@ def start_mod():
         import traceback
         messagebox.showerror(title="ошибка", message = "Возникло исключение: Выбери стобик" + str(err))
         traceback.print_exc()  
-
+def start_del():
+    del_columns()
 
 window = Tk()
 number = 284
@@ -493,7 +494,7 @@ Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
 Button(f, text="Конвертировать", command=convert).pack(fill=X)
 Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
 Button(f, text="Посчитаем разницу в одинаковых фалах", command=start_mod).pack(fill=X)
-
+Button(f, text="Удалить столбик", command=start_del).pack(fill=X)
 
 
 current_dir = tk.StringVar()
