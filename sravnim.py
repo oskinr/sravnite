@@ -16,6 +16,7 @@ import pathlib,os.path
 from module import some_function
 from module2 import some_form
 from module3 import del_columns
+from module4 import zip_arh
 appdir = pathlib.Path(__file__).parent.resolve()
 
     
@@ -495,7 +496,7 @@ Button(f, text="Конвертировать", command=convert).pack(fill=X)
 Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
 Button(f, text="Посчитаем разницу в одинаковых фалах", command=start_mod).pack(fill=X)
 Button(f, text="Удалить столбик", command=start_del).pack(fill=X)
-
+Button(f, text="Добавить архив", command=zip_arh).pack(fill=X)
 
 current_dir = tk.StringVar()
 
