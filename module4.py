@@ -1,14 +1,16 @@
 import os
+from zipfile import ZipFile
 from tkinter import *
 from tkinter import filedialog, messagebox
 import pyzipper
 import tkinter as tk
 import pathlib,os.path
+from tkinter.messagebox import showinfo, askyesno
 appdir = pathlib.Path(__file__).parent.resolve()
 
 
 
-def zip_arh():
+def zip_arh(tree_view,current_dir):
 
     # Функция архивирования каждого файла отдельно
     def archive_each_file_separately(dir_path, password=None):
@@ -79,13 +81,71 @@ def zip_arh():
         except Exception as e:
             messagebox.showerror("Ошибка", str(e))
 
+    def click():
+        global directory
+        # options = {}  # Параметры окна выбора директории
+        
+        # Открываем диалог выбора директории
+        directory = filedialog.askdirectory(**options)
+        
+        if not directory:
+            return
+        
+        # Список файлов в директории
+        files = os.listdir(directory)
+        filtered_files = [fname for fname in files if fname.endswith(('.xls', '.xlsx', 'xlsm', '.zip'))]
+        current_dir.set(directory)
+        
+        # Запрашиваем подтверждение у пользователя
+        result = messagebox.askyesno(
+            title="Подтверждение операции",
+            message=f"Файлы в папке:\n\n{'\n'.join(filtered_files)}"
+        )
+        
+        if result:
+            list_files()
+        
+        
+    
+        
+        else:
+            messagebox.showinfo("Результат", "Операция отменена")    
+    def list_files():
+        global directory
+        for filename in os.listdir(directory):
+            if filename.endswith('.zip'):
+                zip_path = os.path.join(directory, filename)
+                
+                # Отображаем файл в дереве
+                tree_view.insert("", "end", values=(filename,))
+                
+                try:
+                    # Распаковываем ZIP-файл
+                    with ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(directory)
+                    
+                    #print(f"Успешно распакован {filename}")
+                except Exception as e:
+                    
+                    messagebox.showerror("Ошибка",f"Ошибка при обработке {filename}: {e}")
+
+
+
+
+
+
+
     # Интерфейс
     root = tk.Toplevel()
     root.title('Архиватор')
-    root.geometry("250x300+100+150")
+    root.geometry("250x320+100+150")
     root.iconbitmap(os.path.join(appdir,'osa.ico'))
     root.lift()
     root.attributes('-topmost', True)
+    options = {"initialdir": "/Downloads","title": "Выбери папку с архивами для разархивирования",
+           "mustexist": True,"parent": root}
+    
+    
     last_used_directory = StringVar(value=os.getcwd())  # Последняя используемая директория
 
     mode_var = StringVar(value="Каждый файл отдельно")  # Начальный режим по умолчанию
@@ -119,13 +179,18 @@ def zip_arh():
     Label(root, textvariable=last_used_directory).pack(pady=(10, 0))
 
     Button(root, text="Выбор директории", command=lambda: select_directory()).pack(pady=(10, 0))
-
     Button(root, text="Создать архив", command=do_archive).pack(pady=(10, 10))
-
+    Button(root, text="Разархивировать файлы в директории", command=click).pack(pady=(10, 0))
+    
+    #current_dir = tk.StringVar()
+    
+    
     # Меняем директорию вручную
     def select_directory():
         chosen_dir = filedialog.askdirectory()
         if chosen_dir:
             last_used_directory.set(chosen_dir)
 
+    
+    
     root.mainloop()
