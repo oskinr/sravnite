@@ -116,18 +116,25 @@ def zip_arh(tree_view,current_dir):
             if filename.endswith('.zip'):
                 zip_path = os.path.join(directory, filename)
                 
+                # Определяем имя архива без расширения
+                base_archive_name = os.path.splitext(filename)[0]
+                
                 # Отображаем файл в дереве
                 tree_view.insert("", "end", values=(filename,))
                 
                 try:
                     # Распаковываем ZIP-файл
                     with ZipFile(zip_path, 'r') as zip_ref:
-                        zip_ref.extractall(directory)
+                        for member in zip_ref.infolist():
+                            # Меняем имя файла на имя архива с расширением оригинала
+                            _, orig_ext = os.path.splitext(member.filename)
+                            new_filename = f"{base_archive_name}{orig_ext}"
+                            member.filename = new_filename
+                            zip_ref.extract(member, directory)
                     
-                    #print(f"Успешно распакован {filename}")
+                    print(f"Успешно распакован {filename}")
                 except Exception as e:
-                    
-                    messagebox.showerror("Ошибка",f"Ошибка при обработке {filename}: {e}")
+                    messagebox.showerror("Ошибка", f"Ошибка при обработке {filename}: {e}")
 
 
 
