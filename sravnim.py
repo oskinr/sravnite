@@ -1,27 +1,26 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
-import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 from tkinter.ttk import *
+from tkinter.messagebox import showinfo, askyesno
+import xml.etree.ElementTree as ET
 from time import sleep
 import os
-import zipfile
-from pathlib import PurePath
-from tkinter.messagebox import showinfo, askyesno
+import pandas as pd
 import win32com.client
-import subprocess
 import pathlib,os.path 
 from module import some_function
 from module2 import some_form
 from module3 import del_columns
 from module4 import zip_arh
-appdir = pathlib.Path(__file__).parent.resolve()
+appdir = pathlib.Path(__file__).parent.resolve() 
+
 
     
 
-#pd.show_versions()
+
 
 
 
@@ -49,6 +48,15 @@ def openanyfile2():
         messagebox.showerror(
             title="ошибка", message="🔒 Привет от системы, что то с Файл 2 : " + str(err))
 
+
+def openanyfile3():
+    global selected_file3
+    selected_file3 = filedialog.askopenfilename()
+    label2.configure(text=selected_file3.split('/')[-1])
+    
+    tree = ET.parse(selected_file3)
+    root = tree.getroot()
+    print(tree)
 
 # Читаем файл 1
 def showfile1():
@@ -247,60 +255,63 @@ def print_list():
 
 
 
-def click():
-    global directory
-    #Получаем список файлов в директории/каталоге os.listdir(directory)
-    directory  = filedialog.askdirectory(**options)
-    files = os.listdir(directory)
-    files = [fname for fname in files if fname.endswith(('.xls', '.xlsx','.zip'))]
-    result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
-    if result:
-      zip_ex()
-    else:
-        showinfo("Результат", "Операция отменена")
+# def click():
+#     global directory
+#     #Получаем список файлов в директории/каталоге os.listdir(directory)
+#     directory  = filedialog.askdirectory(**options)
+#     files = os.listdir(directory)
+#     files = [fname for fname in files if fname.endswith(('.xls', '.xlsx', 'xlsm','.zip'))]
+#     result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
+#     if result:
+#       zip_ex()
+#     else:
+#         showinfo("Результат", "Операция отменена")
 
 
 
 
-def zip_ex():
-    if directory:
-        current_dir.set(directory)
-        list_files(directory)
+# def zip_ex():
+#     if directory:
+#         current_dir.set(directory)
+#         list_files(directory)
 
-def list_files(directory):
-        for filename1 in os.listdir(directory):
-            if os.path.isfile(os.path.join(directory, filename1)):
-                tree_view.insert("", "end", values=(filename1,))
+# def list_files(directory):
+#         for filename1 in os.listdir(directory):
+#             if os.path.isfile(os.path.join(directory, filename1)):
+#                 tree_view.insert("", "end", values=(filename1,))
 
-            #for file in os.listdir(directory):
-                filename = os.fsdecode(filename1)
-                path = os.path.join(directory, filename)
-                #print(path)
+#             #for file in os.listdir(directory):
+#                 filename = os.fsdecode(filename1)
+#                 path = os.path.join(directory, filename)
+#                 #print(path)
 
-                if filename.endswith('.zip'):
-                    try:
-                        with zipfile.ZipFile(path) as zf:
-                            filik = zf.namelist()
-                            namefaile = filik[0]
-                            old_file = f'{directory}\\{namefaile}'
-                            new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
-                            zf.extract(namefaile, directory)
-                    #messagebox.showinfo("извлек", path)
-                    except zipfile.BadZipFile as error:
-                        messagebox.showerror("ошибка", error)
-                    if os.path.exists(new_file):
-                        os.remove(new_file)
-                        os.rename(old_file, new_file)
-                        print(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
-                        #tree_view.insert(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
-                    else:
-                        os.rename(old_file, new_file)
+#                 if filename.endswith('.zip'):
+#                     try:
+#                         with zipfile.ZipFile(path) as zf:
+#                             filik = zf.namelist()
+#                             namefaile = filik[0]
+#                             old_file = f'{directory}\\{namefaile}'
+#                             new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
+#                             zf.extract(namefaile, directory)
+#                     #messagebox.showinfo("извлек", path)
+#                     except zipfile.BadZipFile as error:
+#                         messagebox.showerror("ошибка", error)
+#                     if os.path.exists(new_file):
+#                         os.remove(new_file)
+#                         os.rename(old_file, new_file)
+#                         print('Результат', f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+#                         #tree_view.insert(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+#                     else:
+#                         os.rename(old_file, new_file)
 
-                    label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
+# #                     #label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
 
 
 def convert():
     try:  
+        
+        
+        
         file = filedialog.askopenfilename().replace('/', '\\')
         #print(file)
         wbf = file + "x"
@@ -341,10 +352,15 @@ def start_mod():
         import traceback
         messagebox.showerror(title="ошибка", message = "Возникло исключение: Выбери стобик" + str(err))
         traceback.print_exc()  
+
 def start_del():
     del_columns()
 
-window = Tk()
+def zip_ar():
+    # Предполагая, что tree_view - это объект TreeView, созданный ранее
+    zip_arh(tree_view,current_dir)
+
+window = tk.Tk()
 number = 284
 window.title("Сравнить файлы")
 window.geometry("1500x700")
@@ -355,10 +371,10 @@ options = {"initialdir": "/Downloads","title": "Выбери папку с ар�
            "mustexist": True,"parent": window}
 
 
-# window.iconbitmap(default="boss.ico")
+
 #window.iconphoto(False, tk.PhotoImage(file='osa.png'))
 #window.iconphoto(os.path.join(appdir,'osa.png'))
-# window.iconbitmap(default="boss.ico")
+
 window.iconbitmap(os.path.join(appdir,'osa.ico'))
 # Отступ от верха окна
 frame = Frame(window, width=400, height=100)
@@ -406,6 +422,10 @@ file1.grid(row=2, column=0)
 
 file2 = ttk.Button(frame, text="Файл 2", command=openanyfile2)
 file2.grid(row=3, column=0)
+
+file3 = ttk.Button(frame, text="Файл xml", command=openanyfile3)
+file3.grid(row=4, column=0)
+
 
 calc_btn = ttk.Button(frame, text="Слияние в один файл", command=show_message)
 calc_btn.grid(row=6, column=1)
@@ -487,26 +507,24 @@ f.pack(side=LEFT, padx=10)
 combo4 = Combobox(f, values='')
 combo4.pack(fill=X, padx=90, pady=6)
 
-Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
+#Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
 Button(f, text="Добавить", command=add_item).pack(fill=X)
 Button(f, text="Удалить", command=del_list).pack(fill=X)
-Button(f, text="Собрать", command=print_list).pack(fill=X)
+Button(f, text="Слияние", command=print_list).pack(fill=X)
 Button(f, text="Удалить список >>>", command=del_tree).pack(fill=X)
-Button(f, text="Конвертировать", command=convert).pack(fill=X)
+Button(f, text="Конвертировать xml xls - xlsx", command=convert).pack(fill=X)
 Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
-Button(f, text="Посчитаем разницу в одинаковых фалах", command=start_mod).pack(fill=X)
+Button(f, text="Посчитаем строки в одинаковых фалах", command=start_mod).pack(fill=X)
 Button(f, text="Удалить столбик", command=start_del).pack(fill=X)
-Button(f, text="Добавить архив", command=zip_arh).pack(fill=X)
+Button(f, text="Работа с архивами", command=zip_ar).pack(fill=X)
 
 current_dir = tk.StringVar()
-
-folder_label = tk.Label( textvariable=current_dir, font=("italic 14"))
+font_style = ("Arial", 11, "italic")
+folder_label = tk.Label( textvariable=current_dir, font=font_style)
 folder_label.pack()
 
-tree_view = ttk.Treeview( columns=("Files",), show="headings", selectmode="browse")
+tree_view = ttk.Treeview(columns=("Files",), show="headings", selectmode="browse")
 tree_view.heading("Files", text="Файлы в директории")
 tree_view.pack(padx=20, pady=20, fill="both", expand=True)
-
-#ttk.Button(text="Click", command=click).pack(anchor="center", expand=1)
 
 window.mainloop()
