@@ -257,56 +257,56 @@ def print_list():
 
 
 
-def click():
-    global directory
-    #Получаем список файлов в директории/каталоге os.listdir(directory)
-    directory  = filedialog.askdirectory(**options)
-    files = os.listdir(directory)
-    files = [fname for fname in files if fname.endswith(('.xls', '.xlsx', 'xlsm','.zip'))]
-    result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
-    if result:
-      zip_ex()
-    else:
-        showinfo("Результат", "Операция отменена")
+# def click():
+#     global directory
+#     #Получаем список файлов в директории/каталоге os.listdir(directory)
+#     directory  = filedialog.askdirectory(**options)
+#     files = os.listdir(directory)
+#     files = [fname for fname in files if fname.endswith(('.xls', '.xlsx', 'xlsm','.zip'))]
+#     result = askyesno(title="Подтвержение операции", message=("Файлы в папке:\n\n" + "\n".join(files)),)
+#     if result:
+#       zip_ex()
+#     else:
+#         showinfo("Результат", "Операция отменена")
 
 
 
 
-def zip_ex():
-    if directory:
-        current_dir.set(directory)
-        list_files(directory)
+# def zip_ex():
+#     if directory:
+#         current_dir.set(directory)
+#         list_files(directory)
 
-def list_files(directory):
-        for filename1 in os.listdir(directory):
-            if os.path.isfile(os.path.join(directory, filename1)):
-                tree_view.insert("", "end", values=(filename1,))
+# def list_files(directory):
+#         for filename1 in os.listdir(directory):
+#             if os.path.isfile(os.path.join(directory, filename1)):
+#                 tree_view.insert("", "end", values=(filename1,))
 
-            #for file in os.listdir(directory):
-                filename = os.fsdecode(filename1)
-                path = os.path.join(directory, filename)
-                #print(path)
+#             #for file in os.listdir(directory):
+#                 filename = os.fsdecode(filename1)
+#                 path = os.path.join(directory, filename)
+#                 #print(path)
 
-                if filename.endswith('.zip'):
-                    try:
-                        with zipfile.ZipFile(path) as zf:
-                            filik = zf.namelist()
-                            namefaile = filik[0]
-                            old_file = f'{directory}\\{namefaile}'
-                            new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
-                            zf.extract(namefaile, directory)
-                    #messagebox.showinfo("извлек", path)
-                    except zipfile.BadZipFile as error:
-                        messagebox.showerror("ошибка", error)
-                    if os.path.exists(new_file):
-                        os.remove(new_file)
-                        os.rename(old_file, new_file)
-                        print('Результат', f"из {filename} извлечен файл:{os.path.basename(new_file)}")
-                        #tree_view.insert(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
-                    else:
-                        os.rename(old_file, new_file)
+#                 if filename.endswith('.zip'):
+#                     try:
+#                         with zipfile.ZipFile(path) as zf:
+#                             filik = zf.namelist()
+#                             namefaile = filik[0]
+#                             old_file = f'{directory}\\{namefaile}'
+#                             new_file = f'{directory}\\{PurePath(filename).stem}{".xls"}'
+#                             zf.extract(namefaile, directory)
+#                     #messagebox.showinfo("извлек", path)
+#                     except zipfile.BadZipFile as error:
+#                         messagebox.showerror("ошибка", error)
+#                     if os.path.exists(new_file):
+#                         os.remove(new_file)
+#                         os.rename(old_file, new_file)
+#                         print('Результат', f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+#                         #tree_view.insert(f"из {filename} извлечен файл:{os.path.basename(new_file)}")
+#                     else:
+#                         os.rename(old_file, new_file)
 
-#                     #label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
+# #                     #label7.configure(text=f" Из:{filename}\n Извлечен файл :\n {os.path.basename(new_file)}")
 
 
 def convert():
@@ -509,7 +509,7 @@ f.pack(side=LEFT, padx=10)
 combo4 = Combobox(f, values='')
 combo4.pack(fill=X, padx=90, pady=6)
 
-Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
+#Button(text="Разархивировать файлы - выбрать директорию", command=click).pack(fill=X, padx=90, pady=1)
 Button(f, text="Добавить", command=add_item).pack(fill=X)
 Button(f, text="Удалить", command=del_list).pack(fill=X)
 Button(f, text="Слияние", command=print_list).pack(fill=X)
