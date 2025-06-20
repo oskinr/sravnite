@@ -6,18 +6,16 @@ import pyzipper
 import tkinter as tk
 import pathlib,os.path
 from tkinter.messagebox import showinfo, askyesno
+from module5 import move_selected_zips, prepare_gui_for_move
 appdir = pathlib.Path(__file__).parent.resolve()
 
-
-
-def zip_arh(tree_view,current_dir):
-
+def zip_arh(tree_view, current_dir):
     # Функция архивирования каждого файла отдельно
     def archive_each_file_separately(dir_path, password=None):
-        xls_files = [f for f in os.listdir(dir_path) if f.endswith(('.xlsx', '.xls'))]
-        
+        chosen_dir = dir_path
+        xls_files = [f for f in os.listdir(chosen_dir) if f.endswith(('.xlsx', '.xls'))]
         if not xls_files:
-            raise FileNotFoundError("Ни одного файла XLS не обнаружено.")
+            raise FileNotFoundError("Файлы XLS не найдены.")
         
         for file in xls_files:
             full_path = os.path.join(dir_path, file)
@@ -32,7 +30,10 @@ def zip_arh(tree_view,current_dir):
             else:
                 with pyzipper.AESZipFile(output_zip_path, 'w', compression=pyzipper.ZIP_DEFLATED, encryption=None) as zf:
                     zf.write(full_path, arcname=file)
+    
 
+
+    
     # Функция архивирования всех файлов в один архив
     def archive_all_files_together(dir_path, password=None):
         xls_files = [f for f in os.listdir(dir_path) if f.endswith(('.xlsx', '.xls'))]
@@ -55,11 +56,21 @@ def zip_arh(tree_view,current_dir):
                 for file in input_files:
                     zf.write(file, arcname=os.path.basename(file))
 
+ 
+        
+        
+
+
+
     # Основная функция архивирования
     def do_archive():
         selected_mode = mode_var.get()
-        directory = last_used_directory.get() or os.getcwd()
+        directory = last_used_directory.get()  # Используем выбранную директорию
         
+        # Проверяем, что директория выбрана
+        if not directory.strip():  # Проверка на пустоту
+            messagebox.showwarning("Ошибка", "Необходимо выбрать директорию!")
+            return
         try:
             password = None
             if use_password.get():
@@ -98,9 +109,10 @@ def zip_arh(tree_view,current_dir):
         
         # Запрашиваем подтверждение у пользователя
         result = messagebox.askyesno(
-            title="Подтверждение операции",
-            message=f"Файлы в папке:\n\n{'\n'.join(filtered_files)}"
-        )
+    title="Подтверждение операции",
+    message=f"Файлы в папке ({len(filtered_files)} штук):\n\n" + "\n".join(filtered_files[:10]) +
+           (f"\n...\n({len(filtered_files)-10} остальных)" if len(filtered_files) > 10 else "")
+)
         
         if result:
             list_files()
@@ -110,6 +122,11 @@ def zip_arh(tree_view,current_dir):
         
         else:
             messagebox.showinfo("Результат", "Операция отменена")    
+    
+        
+    
+    
+    
     def list_files():
         global directory
         for filename in os.listdir(directory):
@@ -137,7 +154,9 @@ def zip_arh(tree_view,current_dir):
                     messagebox.showerror("Ошибка", f"Ошибка при обработке {filename}: {e}")
 
 
-
+    def zipexport():
+    
+        prepare_gui_for_move()
 
 
 
@@ -145,7 +164,7 @@ def zip_arh(tree_view,current_dir):
     # Интерфейс
     root = tk.Toplevel()
     root.title('Архиватор')
-    root.geometry("250x320+100+150")
+    root.geometry("250x350+100+150")
     root.iconbitmap(os.path.join(appdir,'osa.ico'))
     root.lift()
     root.attributes('-topmost', True)
@@ -153,7 +172,12 @@ def zip_arh(tree_view,current_dir):
            "mustexist": True,"parent": root}
     
     
-    last_used_directory = StringVar(value=os.getcwd())  # Последняя используемая директория
+
+
+
+
+    last_used_directory = StringVar()  # Больше не задаём дефолтную директорию!
+   #last_used_directory = StringVar(value=os.getcwd())  # Последняя используемая директория
 
     mode_var = StringVar(value="Каждый файл отдельно")  # Начальный режим по умолчанию
     use_password = BooleanVar(value=False)
@@ -188,7 +212,7 @@ def zip_arh(tree_view,current_dir):
     Button(root, text="Выбор директории", command=lambda: select_directory()).pack(pady=(10, 0))
     Button(root, text="Создать архив", command=do_archive).pack(pady=(10, 10))
     Button(root, text="Разархивировать файлы в директории", command=click).pack(pady=(10, 0))
-    
+    Button(root, text="Собрать все zip файлы в папку Архив ", command=zipexport).pack(pady=(10, 0))
     #current_dir = tk.StringVar()
     
     
