@@ -15,8 +15,7 @@ from module import some_function
 from module2 import some_form
 from module3 import del_columns
 from module4 import zip_arh
-import zipfile
-from pathlib import PurePath
+
 appdir = pathlib.Path(__file__).parent.resolve() 
 
 
@@ -358,32 +357,25 @@ def start_mod():
 def start_del():
     del_columns()
 
-def zip_ar():
+def zip_arhiv():
     # Предполагая, что tree_view - это объект TreeView, созданный ранее
     zip_arh(tree_view,current_dir)
 
 window = tk.Tk()
 number = 284
 window.title("Сравнить файлы")
-window.geometry("1500x700")
-
+window.geometry("1500x700+10+20")  # Ширина=800px, Высота=600px, Координата X=100, Координата Y=0
 
 
 options = {"initialdir": "/Downloads","title": "Выбери папку с архивами для разархивирования",
            "mustexist": True,"parent": window}
 
 
-
-#window.iconphoto(False, tk.PhotoImage(file='osa.png'))
-#window.iconphoto(os.path.join(appdir,'osa.png'))
-
 window.iconbitmap(os.path.join(appdir,'osa.ico'))
 # Отступ от верха окна
 frame = Frame(window, width=400, height=100)
-frame = Frame(window)
-#frame.pack(expand=False)
-frame.pack(fill=Y)
-#frame = Frame(master=window, relief=GROOVE, borderwidth=5)
+frame.pack(pady=(5, 5))  # Нормальные отступы вокруг рамки
+
 
 
 # создаем текстовую метку
@@ -518,7 +510,7 @@ Button(f, text="Конвертировать xml xls - xlsx", command=convert).p
 Button(f, text="Переименовать файлы в директории", command=per).pack(fill=X)
 Button(f, text="Посчитаем строки в одинаковых фалах", command=start_mod).pack(fill=X)
 Button(f, text="Удалить столбик", command=start_del).pack(fill=X)
-Button(f, text="Работа с архивами", command=zip_ar).pack(fill=X)
+Button(f, text="Работа с архивами", command=zip_arhiv).pack(fill=X)
 
 current_dir = tk.StringVar()
 font_style = ("Arial", 11, "italic")
