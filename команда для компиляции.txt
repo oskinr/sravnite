@@ -1,3 +1,1 @@
-pyinstaller --onefile --noconsole --icon=osa.png sravnim.py
-pyinstaller --onefile --noconsole --icon=osa.ico --add-data osa.ico:. --add-data formper.exe:. --add-data module.py:. sravnim.py
 pyinstaller --onefile --noconsole --icon=osa.ico --add-data osa.ico:. --add-data module.py:. --add-data module2.py:. --add-data module3.py:. --add-data module4.py:. --add-data module5.py:. sravnim.py
